@@ -1,0 +1,232 @@
+import java.util.*;
+
+public class CourierManagementSystem {
+
+    static class Shipment {
+        private String trackingNumber;
+        private String senderName;
+        private String receiverName;
+        private String destination;
+        private double weight;
+        private String status;
+
+        public Shipment(String trackingNumber, String senderName, String receiverName, String destination, double weight) {
+            this.trackingNumber = trackingNumber;
+            this.senderName = senderName;
+            this.receiverName = receiverName;
+            this.destination = destination;
+            this.weight = weight;
+            this.status = "Booked"; // Default status is "Booked"
+        }
+
+        public String getTrackingNumber() {
+            return trackingNumber;
+        }
+
+        public String getSenderName() {
+            return senderName;
+        }
+
+        public String getReceiverName() {
+            return receiverName;
+        }
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        @Override
+        public String toString() {
+            return "Tracking Number: " + trackingNumber + "\n" +
+                    "Sender: " + senderName + "\n" +
+                    "Receiver: " + receiverName + "\n" +
+                    "Destination: " + destination + "\n" +
+                    "Weight: " + weight + "kg\n" +
+                    "Status: " + status + "\n";
+        }
+    }
+
+    private Map<String, Shipment> shipments;
+
+    public CourierManagementSystem() {
+        shipments = new HashMap<>();
+    }
+
+    public void addShipment(String trackingNumber, String senderName, String receiverName, String destination, double weight) {
+        Shipment shipment = new Shipment(trackingNumber, senderName, receiverName, destination, weight);
+        shipments.put(trackingNumber, shipment);
+        System.out.println("Shipment with Tracking Number " + trackingNumber + " has been booked.");
+    }
+
+    public void removeShipment(String trackingNumber) {
+        if (shipments.containsKey(trackingNumber)) {
+            shipments.remove(trackingNumber);
+            System.out.println("Shipment with Tracking Number " + trackingNumber + " has been removed.");
+        } else {
+            System.out.println("Shipment with Tracking Number " + trackingNumber + " not found.");
+        }
+    }
+
+    public void updateShipmentStatus(String trackingNumber, String status) {
+        Shipment shipment = shipments.get(trackingNumber);
+        if (shipment != null) {
+            shipment.setStatus(status);
+            System.out.println("Shipment with Tracking Number " + trackingNumber + " has been updated to status: " + status);
+        } else {
+            System.out.println("Shipment with Tracking Number " + trackingNumber + " not found.");
+        }
+    }
+
+    public Shipment getShipmentByTrackingNumber(String trackingNumber) {
+        return shipments.get(trackingNumber);
+    }
+
+    public List<Shipment> searchByDestination(String destination) {
+        List<Shipment> result = new ArrayList<>();
+        for (Shipment shipment : shipments.values()) {
+            if (shipment.getDestination().equalsIgnoreCase(destination)) {
+                result.add(shipment);
+            }
+        }
+        return result;
+    }
+
+    public List<Shipment> searchByStatus(String status) {
+        List<Shipment> result = new ArrayList<>();
+        for (Shipment shipment : shipments.values()) {
+            if (shipment.getStatus().equalsIgnoreCase(status)) {
+                result.add(shipment);
+            }
+        }
+        return result;
+    }
+
+    public void displayAllShipments() {
+        if (shipments.isEmpty()) {
+            System.out.println("No shipments available.");
+        } else {
+            for (Shipment shipment : shipments.values()) {
+                System.out.println(shipment);
+                System.out.println("=======================================");
+            }
+        }
+    }
+
+    public void showShipmentDetails(String trackingNumber) {
+        Shipment shipment = getShipmentByTrackingNumber(trackingNumber);
+        if (shipment != null) {
+            System.out.println(shipment);
+        } else {
+            System.out.println("Shipment with Tracking Number " + trackingNumber + " not found.");
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CourierManagementSystem system = new CourierManagementSystem();
+
+        while (true) {
+            System.out.println("Courier Management System");
+            System.out.println("1. Add Shipment");
+            System.out.println("2. Remove Shipment");
+            System.out.println("3. Update Shipment Status");
+            System.out.println("4. View All Shipments");
+            System.out.println("5. Search Shipments by Destination");
+            System.out.println("6. Search Shipments by Status");
+            System.out.println("7. View Shipment Details");
+            System.out.println("8. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Tracking Number: ");
+                    String trackingNumber = scanner.nextLine();
+                    System.out.print("Enter Sender Name: ");
+                    String senderName = scanner.nextLine();
+                    System.out.print("Enter Receiver Name: ");
+                    String receiverName = scanner.nextLine();
+                    System.out.print("Enter Destination: ");
+                    String destination = scanner.nextLine();
+                    System.out.print("Enter Weight (kg): ");
+                    double weight = scanner.nextDouble();
+                    scanner.nextLine(); // Consume newline
+                    system.addShipment(trackingNumber, senderName, receiverName, destination, weight);
+                    break;
+
+                case 2:
+                    System.out.print("Enter Tracking Number to Remove: ");
+                    String removeTrackingNumber = scanner.nextLine();
+                    system.removeShipment(removeTrackingNumber);
+                    break;
+
+                case 3:
+                    System.out.print("Enter Tracking Number to Update: ");
+                    String updateTrackingNumber = scanner.nextLine();
+                    System.out.print("Enter New Status: ");
+                    String newStatus = scanner.nextLine();
+                    system.updateShipmentStatus(updateTrackingNumber, newStatus);
+                    break;
+
+                case 4:
+                    system.displayAllShipments();
+                    break;
+
+                case 5:
+                    System.out.print("Enter Destination to Search: ");
+                    String searchDestination = scanner.nextLine();
+                    List<Shipment> destinationResult = system.searchByDestination(searchDestination);
+                    if (destinationResult.isEmpty()) {
+                        System.out.println("No shipments found for destination: " + searchDestination);
+                    } else {
+                        for (Shipment shipment : destinationResult) {
+                            System.out.println(shipment);
+                            System.out.println("=======================================");
+                        }
+                    }
+                    break;
+
+                case 6:
+                    System.out.print("Enter Status to Search (Booked, In Transit, Delivered, etc.): ");
+                    String searchStatus = scanner.nextLine();
+                    List<Shipment> statusResult = system.searchByStatus(searchStatus);
+                    if (statusResult.isEmpty()) {
+                        System.out.println("No shipments found with status: " + searchStatus);
+                    } else {
+                        for (Shipment shipment : statusResult) {
+                            System.out.println(shipment);
+                            System.out.println("=======================================");
+                        }
+                    }
+                    break;
+
+                case 7:
+                    System.out.print("Enter Tracking Number to View Details: ");
+                    String detailsTrackingNumber = scanner.nextLine();
+                    system.showShipmentDetails(detailsTrackingNumber);
+                    break;
+
+                case 8:
+                    System.out.println("Exiting the system...");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+}
